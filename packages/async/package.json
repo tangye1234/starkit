@@ -1,0 +1,26 @@
+{
+  "name": "@fine/async",
+  "version": "1.0.0",
+  "license": "MIT",
+  "sideEffect": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": ["dist/**"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "lint:fix": "eslint \"src/**/*.ts*\" --fix"
+  },
+  "dependencies": {
+    "@fine/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@fine/eslint-config": "workspace:*",
+    "@fine/tsconfig": "workspace:*",
+    "@types/node": "~18.0.0",
+    "typescript": "^5.3.3"
+  }
+}
