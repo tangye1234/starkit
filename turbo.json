@@ -11,8 +11,6 @@
     "PORT",
     "HOST",
     "NODE_ENV",
-    "REDIS_URL",
-    "API_*",
     "NEXT_PUBLIC_*",
     "!NEXT_PUBLIC_GIT_*"
   ],

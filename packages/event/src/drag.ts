@@ -55,7 +55,7 @@ const symbolPrevented = Symbol('drag.prevented')
 const symbolListener = Symbol('drag.listener')
 
 interface DragMeta<
-  R extends Lifecycle.Ref | undefined,
+  R extends Lifecycle.Ref | undefined = Lifecycle.Ref | undefined,
   E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent,
   S extends NonNullable<unknown> = NonNullable<unknown>,
   ESC extends boolean = true
@@ -339,13 +339,11 @@ const dragMetaProto = {
                 typeof handler
               >
               dispatch(evt)
+
+              // remove all listeners bound to document or window
+              disposeDrag()
             }
           )
-
-          const finalize = () => {
-            endListener()
-            disposeDrag()
-          }
 
           dispatch(evt)
 
@@ -357,7 +355,7 @@ const dragMetaProto = {
           > = evt
 
           if (evt.defaultPrevented) {
-            queueTask(finalize)
+            queueTask(disposeDrag)
             return handler
           }
 
@@ -388,7 +386,7 @@ const dragMetaProto = {
             dispatch(evt)
             lastEvt = evt
             if (evt.defaultPrevented) {
-              queueTask(finalize)
+              queueTask(disposeDrag)
             }
           }
 
@@ -437,21 +435,14 @@ function getEventPointer(e: MouseEvent | TouchEvent) {
 }
 
 function getIdentifier<T>(evt: T) {
-  if (!evt) {
-    return null as Identifier<T>
-  }
-  if (evt instanceof MouseEvent) {
-    return 'mouse' as Identifier<T>
-  }
-  if (evt instanceof TouchEvent) {
+  if (!evt) return null as Identifier<T>
+  if (evt instanceof MouseEvent) return 'mouse' as Identifier<T>
+  if (evt instanceof TouchEvent)
     return evt.touches[0].identifier as Identifier<T>
-  }
-  if (evt instanceof KeyboardEvent && evt.key === 'Escape') {
+  if (evt instanceof KeyboardEvent && evt.key === 'Escape')
     return 'escape' as Identifier<T>
-  }
-  if (evt instanceof FocusEvent && evt.type === 'blur') {
+  if (evt instanceof FocusEvent && evt.type === 'blur')
     return 'blur' as Identifier<T>
-  }
   return null as Identifier<T>
 }
 
@@ -469,6 +460,15 @@ function dispatch(
   set?.forEach(listener => listener(evt))
 }
 
+const defaultTouchable: DragMeta[typeof symbolTouchable] = el =>
+  !!navigator.maxTouchPoints || 'ontouchstart' in el
+const defaultSubject: DragMeta[typeof symbolSubject] = ({ x, y }) => ({ x, y })
+const defaultContainer: DragMeta[typeof symbolContainer] = el =>
+  el instanceof HTMLCanvasElement || el instanceof OffscreenCanvas
+    ? el
+    : el.parentElement || document.body
+const defaultTarget = () => document.body
+
 export function drag(ref?: Lifecycle.Ref) {
   const meta = Object.create(dragMetaProto) as DragMeta<
     Lifecycle.Ref | undefined,
@@ -479,20 +479,11 @@ export function drag(ref?: Lifecycle.Ref) {
     DragEventMeta
 
   meta[symbolRef] = ref
-  meta[symbolTarget] = () => document.body
-  meta[symbolContainer] = (el: HTMLElement) => {
-    if (el instanceof HTMLCanvasElement || el instanceof OffscreenCanvas) {
-      return el
-    }
-    return el.parentElement || document.body
-  }
   meta[symbolEscapable] = true
-  meta[symbolTouchable] = (el: HTMLElement) =>
-    !!navigator.maxTouchPoints || 'ontouchstart' in el
-  meta[symbolSubject] = ev => ({
-    x: ev.x,
-    y: ev.y
-  })
+  meta[symbolTarget] = defaultTarget
+  meta[symbolContainer] = defaultContainer
+  meta[symbolTouchable] = defaultTouchable
+  meta[symbolSubject] = defaultSubject
 
   return meta as DragEventMeta
 }
