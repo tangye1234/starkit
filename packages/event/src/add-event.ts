@@ -67,16 +67,12 @@ const addEvent = ((
   options?: boolean | AddEventListenerOptions
 ) => {
   const events = Array.isArray(event) ? [...event] : [event]
-
-  let disposed = false
   events.forEach(event => target.addEventListener(event, listener, options))
 
   return () => {
-    if (disposed) return
-    disposed = true
-    events.forEach(event =>
-      target.removeEventListener(event, listener, options)
-    )
+    let evt: string | undefined
+    while ((evt = events.pop()))
+      target.removeEventListener(evt, listener, options)
   }
 }) as AddEvent
 

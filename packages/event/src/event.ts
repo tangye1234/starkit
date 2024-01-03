@@ -46,7 +46,7 @@ export interface EventFactory {
   readonly on: AddEvent<EventFactory>
 }
 
-export function eventFactory(ref?: Lifecycle.Ref) {
+export function event(ref?: Lifecycle.Ref) {
   const [store, dispose] = Lifecycle.store(ref)
   const handler = {
     on: (

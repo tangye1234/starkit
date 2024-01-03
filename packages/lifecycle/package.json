@@ -2,7 +2,7 @@
   "name": "@fine/lifecycle",
   "version": "1.0.0",
   "license": "MIT",
-  "sideEffect": false,
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
