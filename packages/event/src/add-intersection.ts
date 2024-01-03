@@ -1,3 +1,5 @@
+import { queueTask } from '@fine/utils'
+
 type ObserverInit = Omit<IntersectionObserverInit, 'threshold'>
 type ObserverCallback = (entry: IntersectionObserverEntry) => void
 type Identifier = {
@@ -120,12 +122,10 @@ function createObserver(options: ObserverInit): IntersectionObserver {
 }
 
 function deleteObserver(options: ObserverInit) {
-  const index = idList.findIndex(
-    obj => obj.root === root && obj.margin === margin
-  )
+  const id = getIdentifier(options)
 
-  if (index > -1) {
-    const [id] = idList.splice(index, 1)
+  if (id) {
+    deleteIdentifier(options)
     return observers.delete(id)
   }
 
@@ -146,15 +146,14 @@ export function addIntersection(
     listenerCounterMap.set(observer, l)
   }
 
-  let h = 0
   const listeners = l
   let counter = listeners.get(element)
   if (typeof counter !== 'number' || counter < 1) {
     counter = 0
     observer.observe(element)
   } else {
-    h = window.setTimeout(() => {
-      h = 0
+    queueTask(() => {
+      if (haveUnobserved) return
       const entry = state.entry
       entry && callback(entry)
     })
@@ -167,8 +166,6 @@ export function addIntersection(
   return function unobserve(): void {
     if (haveUnobserved) return
     haveUnobserved = true
-
-    h && clearTimeout(h)
 
     unbindCallbackFromElementState(element, observer, callback)
 
