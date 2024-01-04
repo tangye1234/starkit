@@ -9,7 +9,7 @@ export function useThrottle<T extends (...args: any[]) => void>(
 ) {
   const referencedFn = useCallbackRef(fn)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const throttledFn = useMemo(() => throttle(referencedFn, delay) as T, [delay])
+  const throttledFn = useMemo(() => throttle(referencedFn, delay), [delay])
 
   return throttledFn
 }

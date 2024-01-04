@@ -18,7 +18,9 @@ export interface DefaultSubject {
   readonly y: number
 }
 
-export interface SubjectEvent<E extends MouseEvent | TouchEvent> {
+export interface SubjectEvent<
+  E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent
+> {
   readonly x: number
   readonly y: number
   readonly nativeEvent: E
@@ -54,27 +56,6 @@ const symbolSubject = Symbol('drag.subject')
 const symbolPrevented = Symbol('drag.prevented')
 const symbolListener = Symbol('drag.listener')
 
-interface DragMeta<
-  R extends Lifecycle.Ref | undefined = Lifecycle.Ref | undefined,
-  E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent,
-  S extends NonNullable<unknown> = NonNullable<unknown>,
-  ESC extends boolean = true
-> {
-  [symbolRef]: R
-  [symbolTarget]: HTMLElement | (() => HTMLElement)
-  [symbolContainer]: HTMLElement | ((target: HTMLElement) => HTMLElement)
-  [symbolTouchable]: boolean | ((target: HTMLElement) => boolean)
-  [symbolEscapable]: ESC | ((target: HTMLElement) => ESC)
-  [symbolSubject]: (
-    ev: SubjectEvent<E>,
-    target: HTMLElement
-  ) => S | undefined | void
-}
-
-interface DraggingMeta {
-  [symbolListener]: Map<string, Set<(...args: [any]) => void>>
-}
-
 type HasKeyboardEvent<ESC extends boolean> = ESC extends true
   ? KeyboardEvent
   : never
@@ -91,21 +72,21 @@ type CancelEvent<E extends MouseEvent | TouchEvent, ESC extends boolean> =
 
 interface DragEventMap<
   E extends MouseEvent | TouchEvent,
-  S extends NonNullable<unknown>,
+  S,
   ESC extends boolean
 > {
-  start: DragEvent<E, S, 'start', DisposableDrag<E, S, ESC>>
-  drag: DragEvent<E, S, 'drag', DisposableDrag<E, S, ESC>>
-  end: DragEvent<E, S, 'end', DisposableDrag<E, S, ESC>>
-  cancel: DragEvent<CancelEvent<E, ESC>, S, 'cancel', DisposableDrag<E, S, ESC>>
+  start: DragEvent<E, S, 'start', DragHandler<E, S, ESC>>
+  drag: DragEvent<E, S, 'drag', DragHandler<E, S, ESC>>
+  end: DragEvent<E, S, 'end', DragHandler<E, S, ESC>>
+  cancel: DragEvent<CancelEvent<E, ESC>, S, 'cancel', DragHandler<E, S, ESC>>
 }
 
-export interface DragEventMeta<
+export interface DragFactory<
   E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent,
-  S extends NonNullable<unknown> = DefaultSubject,
+  S = DefaultSubject,
   ESC extends boolean = true
 > {
-  target(target: HTMLElement | (() => HTMLElement)): DragEventMeta<E, S, ESC>
+  target(target: HTMLElement | (() => HTMLElement)): DragFactory<E, S, ESC>
   /**
    * A container which is used to compute the offset x and offset y position.
    *
@@ -115,7 +96,7 @@ export interface DragEventMeta<
    */
   container(
     el: HTMLElement | ((target: HTMLElement) => HTMLElement)
-  ): DragEventMeta<E, S, ESC>
+  ): DragFactory<E, S, ESC>
   /**
    * Whether to use touch event for dragging.
    * Default is to detect the touch device.
@@ -123,11 +104,7 @@ export interface DragEventMeta<
    */
   useTouch<T extends boolean>(
     touchable: T | ((target: HTMLElement) => T)
-  ): T extends true
-    ? DragEventMeta<MouseEvent | TouchEvent, S, ESC>
-    : T extends false
-      ? DragEventMeta<MouseEvent, S, ESC>
-      : DragEventMeta<MouseEvent | TouchEvent, S, ESC>
+  ): DragFactory<T extends false ? MouseEvent : MouseEvent | TouchEvent, S, ESC>
   /**
    * Whether to listen to the escape key press for a release of drag.
    * Default is true.
@@ -135,33 +112,31 @@ export interface DragEventMeta<
    */
   useEscape<B extends boolean>(
     escapable: B | ((target: HTMLElement) => B)
-  ): DragEventMeta<E, S, B>
+  ): DragFactory<E, S, B>
   /**
    * Add a subject function so that each of the following event has a static subject.
    * If return void or undefined or null, the following event would be prevented from emitting.
    * @param sub the subject rule method
    */
   subject<R>(
-    sub: (ev: E, target: HTMLElement) => R
-  ): R extends NonNullable<unknown>
-    ? DragEventMeta<E, R, ESC>
-    : DragEventMeta<E, never, ESC>
+    sub: (ev: SubjectEvent, target: HTMLElement) => R
+  ): DragFactory<E, R, ESC>
   on<K extends keyof DragEventMap<E, S, ESC>>(
     type: K | K[],
     listener: (ev: DragEventMap<E, S, ESC>[K]) => void
-  ): DisposableDrag<E, S, ESC>
+  ): DragHandler<E, S, ESC>
 }
 
-export interface DisposableDrag<
+export interface DragHandler<
   E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent,
-  S extends NonNullable<unknown> = NonNullable<unknown>,
+  S = NonNullable<unknown>,
   ESC extends boolean = boolean
 > {
   on<K extends keyof DragEventMap<E, S, ESC>>(
     type: K | K[],
     listener: (ev: DragEventMap<E, S, ESC>[K]) => void
-  ): DisposableDrag<E, S, ESC>
-  dispose: () => void
+  ): this
+  readonly dispose: () => void
 }
 
 const dragEventProto = {
@@ -177,8 +152,15 @@ const dragEventProto = {
   preventDefault(): void
 }
 
-const disposableDragProto = {
-  on(type, listener) {
+class DragHandlerImpl implements DragHandler {
+  private readonly [symbolListener] = new Map<
+    string,
+    Set<(...args: [any]) => void>
+  >()
+
+  constructor(public readonly dispose: () => void) {}
+
+  on(type: string | string[], listener: (...args: [any]) => void): this {
     const map = this[symbolListener]
     const events = Array.isArray(type) ? type : [type]
     events.forEach(event => {
@@ -189,46 +171,107 @@ const disposableDragProto = {
       }
       set.add(listener)
     })
+    return this
   }
-} as DisposableDrag & DraggingMeta
+}
 
-const dragMetaProto = {
-  target(el) {
-    return Object.assign(
-      Object.create(dragMetaProto),
-      { [symbolTarget]: el },
-      this
+class DragFactoryImpl<
+  E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent,
+  S = NonNullable<unknown>,
+  ESC extends boolean = true
+> implements DragFactory<E, S, ESC>
+{
+  private readonly [symbolTarget]: HTMLElement | (() => HTMLElement)
+  private readonly [symbolContainer]:
+    | HTMLElement
+    | ((t: HTMLElement) => HTMLElement)
+  private readonly [symbolSubject]: (ev: SubjectEvent, target: HTMLElement) => S
+  private readonly [symbolEscapable]: ESC | ((target: HTMLElement) => ESC)
+  private readonly [symbolTouchable]:
+    | boolean
+    | ((target: HTMLElement) => boolean)
+
+  private readonly [symbolRef]?: Lifecycle.Ref
+
+  constructor(
+    target: HTMLElement | (() => HTMLElement),
+    container: HTMLElement | ((target: HTMLElement) => HTMLElement),
+    subject: (ev: SubjectEvent, target: HTMLElement) => S,
+    escapable: ESC | ((target: HTMLElement) => ESC),
+    touchable: boolean | ((target: HTMLElement) => boolean),
+    ref?: Lifecycle.Ref | undefined
+  ) {
+    this[symbolTarget] = target
+    this[symbolContainer] = container
+    this[symbolSubject] = subject
+    this[symbolEscapable] = escapable
+    this[symbolTouchable] = touchable
+    this[symbolRef] = ref
+  }
+
+  target(target: HTMLElement | (() => HTMLElement)) {
+    return new DragFactoryImpl<E, S, ESC>(
+      target,
+      this[symbolContainer],
+      this[symbolSubject],
+      this[symbolEscapable],
+      this[symbolTouchable],
+      this[symbolRef]
     )
-  },
-  container(el) {
-    return Object.assign(
-      Object.create(dragMetaProto),
-      { [symbolContainer]: el },
-      this
+  }
+
+  container(el: HTMLElement | ((target: HTMLElement) => HTMLElement)) {
+    return new DragFactoryImpl<E, S, ESC>(
+      this[symbolTarget],
+      el,
+      this[symbolSubject],
+      this[symbolEscapable],
+      this[symbolTouchable],
+      this[symbolRef]
     )
-  },
-  subject(sub) {
-    return Object.assign(
-      Object.create(dragMetaProto),
-      { [symbolSubject]: sub },
-      this
+  }
+
+  subject<R>(sub: (ev: SubjectEvent, target: HTMLElement) => R) {
+    return new DragFactoryImpl<E, R, ESC>(
+      this[symbolTarget],
+      this[symbolContainer],
+      sub,
+      this[symbolEscapable],
+      this[symbolTouchable],
+      this[symbolRef]
     )
-  },
-  useEscape(escapable) {
-    return Object.assign(
-      Object.create(dragMetaProto),
-      { [symbolEscapable]: escapable },
-      this
+  }
+
+  useEscape<NE extends boolean>(escapable: NE | ((target: HTMLElement) => NE)) {
+    return new DragFactoryImpl<E, S, NE>(
+      this[symbolTarget],
+      this[symbolContainer],
+      this[symbolSubject],
+      escapable,
+      this[symbolTouchable],
+      this[symbolRef]
     )
-  },
-  useTouch(touchable) {
-    return Object.assign(
-      Object.create(dragMetaProto),
-      { [symbolTouchable]: touchable },
-      this
+  }
+
+  useTouch<NE extends boolean>(touchable: NE | ((target: HTMLElement) => NE)) {
+    return new DragFactoryImpl<
+      NE extends false ? MouseEvent : MouseEvent | TouchEvent,
+      S,
+      ESC
+    >(
+      this[symbolTarget],
+      this[symbolContainer],
+      this[symbolSubject],
+      this[symbolEscapable],
+      touchable,
+      this[symbolRef]
     )
-  },
-  on(type, listener) {
+  }
+
+  on<K extends keyof DragEventMap<E, S, ESC>>(
+    type: K | K[],
+    listener: (ev: DragEventMap<E, S, ESC>[K]) => void
+  ): DragHandler<E, S, ESC> {
     const get = <T>(
       fn: T,
       ...args: any[]
@@ -247,9 +290,8 @@ const dragMetaProto = {
     const target = get(targetFn)
     const touchable = get(touchableFn, target)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let subject: any
-    let container!: HTMLElement
+    let subject: S
+    let container: HTMLElement
 
     store.push(
       addEvent(
@@ -282,12 +324,7 @@ const dragMetaProto = {
             nativeEvent: e,
             subject,
             [symbolPrevented]: false
-          } as DragEvent<
-            MouseEvent | TouchEvent,
-            typeof subject,
-            'start',
-            typeof handler
-          >
+          } as DragEvent<MouseEvent | TouchEvent, S, 'start', DragHandlerImpl>
           Object.setPrototypeOf(evt, dragEventProto)
 
           const endListener = once(
@@ -333,10 +370,10 @@ const dragMetaProto = {
                 defaultPrevented: false,
                 preventDefault: () => {}
               } as DragEvent<
-                typeof e,
-                typeof subject,
+                MouseEvent | TouchEvent,
+                S,
                 typeof type,
-                typeof handler
+                DragHandlerImpl
               >
               dispatch(evt)
 
@@ -349,9 +386,9 @@ const dragMetaProto = {
 
           let lastEvt: DragEvent<
             MouseEvent | TouchEvent,
-            typeof subject,
+            S,
             'start' | 'drag',
-            typeof handler
+            DragHandler
           > = evt
 
           if (evt.defaultPrevented) {
@@ -415,20 +452,11 @@ const dragMetaProto = {
       )
     )
 
-    const handler = Object.create(disposableDragProto) as DisposableDrag &
-      DraggingMeta
-    handler[symbolListener] = new Map()
-    handler.dispose = dispose
+    const handler = new DragHandlerImpl(dispose)
     handler.on(type, listener)
-    return handler as DisposableDrag
+    return handler as DragHandler<E, S, ESC>
   }
-} as DragMeta<
-  Lifecycle.Ref | undefined,
-  MouseEvent | TouchEvent,
-  NonNullable<unknown>,
-  boolean
-> &
-  DragEventMeta<MouseEvent | TouchEvent, NonNullable<unknown>, boolean>
+}
 
 function getEventPointer(e: MouseEvent | TouchEvent) {
   return 'touches' in e ? e.touches[0] : e
@@ -449,41 +477,38 @@ function getIdentifier<T>(evt: T) {
 function dispatch(
   evt: DragEvent<
     MouseEvent | TouchEvent | KeyboardEvent | FocusEvent | void | undefined,
-    NonNullable<unknown>,
+    unknown,
     'start' | 'drag' | 'end' | 'cancel',
-    DraggingMeta
+    DragHandlerImpl
   >
 ) {
   const { target, type } = evt
   const map = target[symbolListener]
   const set = map.get(type)
   set?.forEach(listener => listener(evt))
+  // const size = set?.size || 0
+  // return size > 0
 }
 
-const defaultTouchable: DragMeta[typeof symbolTouchable] = el =>
+const defaultTouchable: DragFactoryImpl[typeof symbolTouchable] = el =>
   !!navigator.maxTouchPoints || 'ontouchstart' in el
-const defaultSubject: DragMeta[typeof symbolSubject] = ({ x, y }) => ({ x, y })
-const defaultContainer: DragMeta[typeof symbolContainer] = el =>
+const defaultSubject: DragFactoryImpl[typeof symbolSubject] = ({ x, y }) => ({
+  x,
+  y
+})
+const defaultContainer: DragFactoryImpl[typeof symbolContainer] = el =>
   el instanceof HTMLCanvasElement || el instanceof OffscreenCanvas
     ? el
     : el.parentElement || document.body
 const defaultTarget = () => document.body
 
 export function drag(ref?: Lifecycle.Ref) {
-  const meta = Object.create(dragMetaProto) as DragMeta<
-    Lifecycle.Ref | undefined,
-    MouseEvent | TouchEvent,
-    NonNullable<unknown>,
-    boolean
-  > &
-    DragEventMeta
-
-  meta[symbolRef] = ref
-  meta[symbolEscapable] = true
-  meta[symbolTarget] = defaultTarget
-  meta[symbolContainer] = defaultContainer
-  meta[symbolTouchable] = defaultTouchable
-  meta[symbolSubject] = defaultSubject
-
-  return meta as DragEventMeta
+  return new DragFactoryImpl(
+    defaultTarget,
+    defaultContainer,
+    defaultSubject,
+    true,
+    defaultTouchable,
+    ref
+  ) as DragFactory
 }

@@ -4,17 +4,11 @@ const storeSymbol = Symbol('Lifecycle.Store')
 const storeArraySymbol = Symbol('Lifecycle.Store.array')
 const storeDisposeSymbol = Symbol('Lifecycle.Store.dispose')
 
-interface StoreProto extends Iterable<Dispose> {
-  push(...disposes: Dispose[]): number
-  length: number
-  [storeSymbol]: boolean
-  // struct in store
-  [storeArraySymbol]: Dispose[]
-  [storeDisposeSymbol]: boolean
-}
+class StoreImpl implements Store {
+  private readonly [storeSymbol] = true
+  private [storeDisposeSymbol] = false
+  private readonly [storeArraySymbol]: Dispose[] = []
 
-const storeProto = {
-  [storeSymbol]: true,
   push(...disposes: Dispose[]) {
     if (this[storeDisposeSymbol]) {
       queueTask(() => disposes.forEach(d => d()))
@@ -22,20 +16,15 @@ const storeProto = {
     }
 
     return this[storeArraySymbol].push(...disposes)
-  },
+  }
+
   get length() {
     return this[storeArraySymbol].length
   }
-} as StoreProto
 
-if (Symbol.iterator) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const next = () => ({ value: undefined as any, done: true })
-  storeProto[Symbol.iterator] = function iterable(
-    this: StoreProto
-  ): Iterator<Dispose> {
-    if (this[storeDisposeSymbol]) return { next }
-    return this[storeArraySymbol][Symbol.iterator]()
+  *[Symbol.iterator]() {
+    if (this[storeDisposeSymbol]) return
+    this[storeArraySymbol].forEach(d => yield d)
   }
 }
 
@@ -43,24 +32,20 @@ const refSymbol = Symbol('Lifecycle.Ref')
 const refCurrentSymbol = Symbol('Lifecycle.Ref.current')
 const refDisposeSymbol = Symbol('Lifecycle.Ref.dispose')
 
-interface MutProto {
-  current: Dispose | undefined
-  unref(): void
-  [refSymbol]: boolean
-  // struct in ref
-  [refCurrentSymbol]: Dispose | undefined
-  [refDisposeSymbol]: boolean
-}
+class MutImpl implements Mut {
+  private [refCurrentSymbol]: Dispose | undefined
+  private [refDisposeSymbol] = false
+  private readonly [refSymbol] = true
 
-const mutProto = {
-  [refSymbol]: true,
   unref() {
     this[refCurrentSymbol]?.()
     this[refCurrentSymbol] = undefined
-  },
+  }
+
   get current() {
     return this[refCurrentSymbol]
-  },
+  }
+
   set current(dispose: Dispose | undefined) {
     if (this[refDisposeSymbol]) {
       dispose && queueTask(dispose)
@@ -72,7 +57,7 @@ const mutProto = {
     this[refCurrentSymbol]?.()
     this[refCurrentSymbol] = dispose
   }
-} as MutProto
+}
 
 export type Dispose = () => void
 
@@ -93,9 +78,7 @@ export function all(...disposes: Dispose[]): Dispose {
 }
 
 export function store(ref?: Ref): [store: Store, dispose: Dispose] {
-  const store = Object.create(storeProto) as Store & StoreProto
-  store[storeArraySymbol] = []
-  store[storeDisposeSymbol] = false
+  const store = new StoreImpl()
 
   const dispose: Dispose = () => {
     if (store[storeDisposeSymbol]) return
@@ -110,9 +93,7 @@ export function store(ref?: Ref): [store: Store, dispose: Dispose] {
 }
 
 export function mut(upstream?: Ref): [mut: Mut, dispose: Dispose] {
-  const mut = Object.create(mutProto) as Mut & MutProto
-  mut[refCurrentSymbol] = undefined
-  mut[refDisposeSymbol] = false
+  const mut = new MutImpl()
 
   const dispose = () => {
     if (mut[refDisposeSymbol]) return
@@ -130,11 +111,11 @@ export function mut(upstream?: Ref): [mut: Mut, dispose: Dispose] {
 
 export function isStore(store: unknown): store is Store {
   // arraylike store is for compatible usage
-  return Array.isArray(store) || !!(store && (store as StoreProto)[storeSymbol])
+  return Array.isArray(store) || !!(store && (store as StoreImpl)[storeSymbol])
 }
 
 export function isMut(mut: unknown): mut is Mut {
-  return !!(mut && (mut as MutProto)[refSymbol])
+  return !!(mut && (mut as MutImpl)[refSymbol])
 }
 
 export function isRef(ref: unknown): ref is Ref {

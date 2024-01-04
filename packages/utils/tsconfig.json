@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@fine/tsconfig/base.json",
-  "include": ["src", "../lifecycle/src/index.ts", "../async/src/thread.ts"],
+  "include": ["src"],
   "exclude": ["dist", "build", "node_modules"]
 }

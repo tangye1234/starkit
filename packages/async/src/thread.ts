@@ -1,49 +1,10 @@
 import { deferred, nanoid } from '@fine/utils'
 
-const symbolThread = Symbol('Thread')
-const symbolSignal = Symbol('Thread.signal')
-
-interface ThreadHandlerProto {
-  readonly id: string
-  readonly interrupted: boolean
-  readonly running: boolean
-  readonly signal: AbortSignal
-  interrupt(): void
-  [symbolThread]: Thread
-  [symbolSignal]: AbortSignal
-}
-
-const threadHandlerProto = {
-  get id() {
-    return this[symbolThread].id
-  },
-  get interrupted() {
-    return this[symbolThread].interrupted
-  },
-  get running() {
-    return this[symbolThread].running
-  },
-  get signal() {
-    return this[symbolSignal]
-  },
-  interrupt() {
-    this[symbolThread].interrupt()
-  }
-} as ThreadHandlerProto
-
 export namespace Thread {
-  export interface Handler {
-    readonly id: string
-    readonly interrupted: boolean
-    readonly running: boolean
-    readonly signal: AbortSignal
+  export type Runnable = (this: Thread) => Promise<void>
 
-    interrupt(): void
-  }
-
-  export type Runnable = (h: Handler) => Promise<void>
   export interface Options {
-    readonly run: Runnable
+    readonly run?: Runnable
     readonly onUncaughtError?: (e: unknown) => void
   }
 }
@@ -52,17 +13,16 @@ export class Thread {
   private _id = `Thread #${nanoid()}`
   private _deferred = deferred<void>()
   private _interrupted = false
-  private _finished = false
+  private _dead = false
   private _controller: AbortController | undefined
-  private readonly run: Thread.Runnable
   private onUncaughtError: (e: unknown) => void = e =>
     console.warn(`Thread #${this._id}:`, e)
 
-  constructor(args: Thread.Runnable | Thread.Options) {
+  constructor(args?: Thread.Runnable | Thread.Options) {
     if (typeof args === 'function') {
       this.run = args
-    } else {
-      this.run = args.run
+    } else if (args) {
+      if (args.run) this.run = args.run
       if (args.onUncaughtError) {
         this.onUncaughtError = args.onUncaughtError
       }
@@ -81,7 +41,7 @@ export class Thread {
     if (this._controller) {
       this._controller.abort()
     } else {
-      this._finished = true
+      this._dead = true
       this._deferred.resolve()
     }
   }
@@ -90,8 +50,26 @@ export class Thread {
     return !!this._controller
   }
 
+  public get dead() {
+    return this._dead
+  }
+
+  public async run() {
+    // nothing to do
+  }
+
   public get interrupted() {
     return this._interrupted
+  }
+
+  /**
+   * should only access the signal within run method
+   */
+  public get signal() {
+    if (!this._controller) {
+      throw new Error('cannot acces signal if this thread is not running')
+    }
+    return this._controller.signal
   }
 
   public start() {
@@ -99,22 +77,18 @@ export class Thread {
       console.warn(`Thread ${this.id} is already running.`)
       return this
     }
-    if (this._finished) {
+    if (this._dead) {
       console.warn(`Thread ${this.id} is already finished.`)
       return this
     }
 
     this._controller = new AbortController()
-    const signal = this._controller.signal
-    const h = Object.create(threadHandlerProto)
-    h[symbolThread] = this
-    h[symbolSignal] = signal
 
-    this.run(h)
+    this.run()
       .catch(this.onUncaughtError)
       .finally(() => {
         this._controller = undefined
-        this._finished = true
+        this._dead = true
         this._deferred.resolve()
       })
     return this
