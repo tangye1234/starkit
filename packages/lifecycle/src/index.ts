@@ -24,7 +24,9 @@ class StoreImpl implements Store {
 
   *[Symbol.iterator]() {
     if (this[storeDisposeSymbol]) return
-    this[storeArraySymbol].forEach(d => yield d)
+    for (const d of this[storeArraySymbol]) {
+      yield d
+    }
   }
 }
 
