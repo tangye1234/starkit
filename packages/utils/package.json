@@ -6,7 +6,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
@@ -19,8 +21,5 @@
     "@fine/tsconfig": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "nanoid": "^5.0.4"
   }
 }

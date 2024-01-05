@@ -5,12 +5,15 @@ interface Node<T> {
 }
 
 const symbolRemove = Symbol('list.remove')
+const symbolHas = Symbol('list.has')
+const symbolMap = Symbol('list.map')
 
-export class LinkList<T> implements Iterable<T> {
+export class LinkedList<T> implements Iterable<T> {
   private head: Node<T> | undefined
   private tail: Node<T> | undefined
   private length = 0
   private readonly nodes = new Set<Node<T>>()
+  private readonly [symbolMap] = new WeakMap<Node<T>, ReadOnlyNode<T>>()
 
   get size() {
     return this.length
@@ -25,11 +28,11 @@ export class LinkList<T> implements Iterable<T> {
   }
 
   get firstNode() {
-    return this.head ? new ReadOnlyNode(this.head, this) : undefined
+    return this.head ? ReadOnlyNode.from(this.head, this) : undefined
   }
 
   get lastNode() {
-    return this.tail ? new ReadOnlyNode(this.tail, this) : undefined
+    return this.tail ? ReadOnlyNode.from(this.tail, this) : undefined
   }
 
   clear() {
@@ -107,7 +110,7 @@ export class LinkList<T> implements Iterable<T> {
     return this.length
   }
 
-  forEach(callback: (value: T, index: number, list: LinkList<T>) => void) {
+  forEach(callback: (value: T, index: number, list: LinkedList<T>) => void) {
     let node = this.head
     let index = 0
     while (node) {
@@ -116,8 +119,8 @@ export class LinkList<T> implements Iterable<T> {
     }
   }
 
-  map<U>(callback: (value: T, index: number, list: LinkList<T>) => U) {
-    const result = new LinkList<U>()
+  map<U>(callback: (value: T, index: number, list: LinkedList<T>) => U) {
+    const result = new LinkedList<U>()
     let node = this.head
     let index = 0
     while (node) {
@@ -125,6 +128,35 @@ export class LinkList<T> implements Iterable<T> {
       node = node.next
     }
     return result
+  }
+
+  entries() {
+    const result = [] as [number, T][]
+    let node = this.head
+    let index = 0
+    while (node) {
+      result.push([index++, node.value])
+      node = node.next
+    }
+    return result
+  }
+
+  keys() {
+    return Array.from({ length: this.size }).map((_, idx) => idx)
+  }
+
+  values() {
+    const result = [] as T[]
+    let node = this.head
+    while (node) {
+      result.push(node.value)
+      node = node.next
+    }
+    return result
+  }
+
+  private [symbolHas](node: Node<T>) {
+    return this.nodes.has(node)
   }
 
   private [symbolRemove](node: Node<T>) {
@@ -142,6 +174,8 @@ export class LinkList<T> implements Iterable<T> {
     } else {
       this.tail = prev
     }
+
+    this.length -= 1
   }
 
   *[Symbol.iterator]() {
@@ -158,9 +192,18 @@ const symbolList = Symbol('readonly.list')
 
 class ReadOnlyNode<T> {
   private readonly [symbolNode]: Node<T>
-  private readonly [symbolList]: LinkList<T>
+  private readonly [symbolList]: LinkedList<T>
 
-  constructor(node: Node<T>, list: LinkList<T>) {
+  public static from<R>(node: Node<R>, list: LinkedList<R>) {
+    const hashMap = list[symbolMap]
+    const cached = hashMap.get(node)
+    if (cached) return cached
+    const n = new ReadOnlyNode(node, list)
+    hashMap.set(node, n)
+    return n
+  }
+
+  private constructor(node: Node<T>, list: LinkedList<T>) {
     this[symbolNode] = node
     this[symbolList] = list
   }
@@ -171,19 +214,20 @@ class ReadOnlyNode<T> {
 
   get prev(): ReadOnlyNode<T> | undefined {
     const prev = this[symbolNode].prev
-    if (prev) {
-      return new ReadOnlyNode(prev, this[symbolList])
+    if (prev && this[symbolList][symbolHas](prev)) {
+      return ReadOnlyNode.from(prev, this[symbolList])
     }
   }
 
   get next(): ReadOnlyNode<T> | undefined {
     const next = this[symbolNode].next
-    if (next) {
-      return new ReadOnlyNode(next, this[symbolList])
+    if (next && this[symbolList][symbolHas](next)) {
+      return ReadOnlyNode.from(next, this[symbolList])
     }
   }
 
   remove() {
-    this[symbolList][symbolRemove](this[symbolNode])
+    const node = this[symbolNode]
+    this[symbolList][symbolRemove](node)
   }
 }

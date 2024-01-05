@@ -1,4 +1,4 @@
-import { deferred, nanoid } from '@fine/utils'
+import { deferred } from '@fine/utils'
 
 export namespace Thread {
   export type Runnable = (this: Thread) => Promise<void>
@@ -9,8 +9,11 @@ export namespace Thread {
   }
 }
 
+const symbolId = Symbol('thread.id')
+
 export class Thread {
-  private _id = `Thread #${nanoid()}`
+  private static [symbolId] = 0
+  private _id = `Thread #${Thread[symbolId]++}`
   private _deferred = deferred<void>()
   private _interrupted = false
   private _dead = false
