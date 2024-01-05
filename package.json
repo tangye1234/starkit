@@ -9,7 +9,8 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
-    "start": "turbo run start"
+    "start": "turbo run start",
+    "publish": "turbo run publish"
   },
   "keywords": [
     "finejs",
