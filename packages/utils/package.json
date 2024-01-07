@@ -1,5 +1,5 @@
 {
-  "name": "@fine/utils",
+  "name": "@starkit/utils",
   "version": "1.0.0",
   "lisence": "MIT",
   "sideEffects": false,
@@ -17,8 +17,8 @@
     "lint:fix": "eslint \"src/**/*.ts*\" --fix"
   },
   "devDependencies": {
-    "@fine/eslint-config": "workspace:*",
-    "@fine/tsconfig": "workspace:*",
+    "@starkit/eslint-config": "workspace:*",
+    "@starkit/tsconfig": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   }

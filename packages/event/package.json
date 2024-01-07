@@ -1,5 +1,5 @@
 {
-  "name": "@fine/event",
+  "name": "@starkit/event",
   "version": "1.0.0",
   "license": "MIT",
   "sideEffects": false,
@@ -15,12 +15,12 @@
     "lint:fix": "eslint \"src/**/*.ts*\" --fix"
   },
   "dependencies": {
-    "@fine/lifecycle": "workspace:*",
-    "@fine/utils": "workspace:*"
+    "@starkit/lifecycle": "workspace:*",
+    "@starkit/utils": "workspace:*"
   },
   "devDependencies": {
-    "@fine/eslint-config": "workspace:*",
-    "@fine/tsconfig": "workspace:*",
+    "@starkit/eslint-config": "workspace:*",
+    "@starkit/tsconfig": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   }

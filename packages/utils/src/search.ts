@@ -7,7 +7,9 @@ export function parseSearchParams(search: string | QueryObject) {
     return new URLSearchParams(search)
   }
   const params = new URLSearchParams()
-  Object.entries(search).forEach(([key, value]) => setSearchParamsValue(params, key, value))
+  Object.entries(search).forEach(([key, value]) =>
+    setSearchParamsValue(params, key, value)
+  )
   return params
 }
 

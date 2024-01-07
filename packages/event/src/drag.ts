@@ -1,5 +1,5 @@
-import Lifecycle from '@fine/lifecycle'
-import { once, queueTask } from '@fine/utils'
+import Lifecycle from '@starkit/lifecycle'
+import { once, queueTask } from '@starkit/utils'
 
 import { addEvent } from './add-event'
 

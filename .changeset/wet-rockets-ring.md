@@ -1,11 +1,11 @@
 ---
-"@fine/async": major
-"@fine/eslint-config": major
-"@fine/event": major
-"@fine/lifecycle": major
-"@fine/react-hook": major
-"@fine/tsconfig": major
-"@fine/utils": major
+"@starkit/async": major
+"@starkit/eslint-config": major
+"@starkit/event": major
+"@starkit/lifecycle": major
+"@starkit/react-hook": major
+"@starkit/tsconfig": major
+"@starkit/utils": major
 ---
 
 All initial commits

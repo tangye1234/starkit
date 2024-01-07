@@ -1,8 +1,8 @@
 {
-  "name": "finejs",
+  "name": "starkit",
   "private": true,
-  "namespace": "@fine",
-  "description": "A universal packages for finejs",
+  "namespace": "@starkit",
+  "description": "A universal packages for starkit",
   "main": "index.js",
   "scripts": {
     "build": "turbo run build",
@@ -14,7 +14,7 @@
     "publish": "turbo run publish"
   },
   "keywords": [
-    "finejs",
+    "starkit",
     "utils",
     "lifecycle",
     "disposable",

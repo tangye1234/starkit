@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "FineJS Base TSConfig",
+  "display": "Starkit Base TSConfig",
   "compilerOptions": {
     "composite": false,
     "declaration": true,

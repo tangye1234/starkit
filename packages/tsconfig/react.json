@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "FineJS React TSConfig",
+  "display": "Starkit React TSConfig",
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "react-jsx",

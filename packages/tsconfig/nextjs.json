@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "FineJS NextJS TSConfig",
+  "display": "Starkit NextJS TSConfig",
   "extends": "./base.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],

@@ -1,2 +1,2 @@
-# finejs
+# Starkit
 

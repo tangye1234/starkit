@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: ['@fine/eslint-config/react']
+  extends: ['@starkit/eslint-config/react']
 }

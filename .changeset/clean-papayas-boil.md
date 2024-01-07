@@ -1,11 +1,11 @@
 ---
-"@fine/async": patch
-"@fine/eslint-config": patch
-"@fine/event": patch
-"@fine/lifecycle": patch
-"@fine/react-hook": patch
-"@fine/tsconfig": patch
-"@fine/utils": patch
+"@starkit/async": patch
+"@starkit/eslint-config": patch
+"@starkit/event": patch
+"@starkit/lifecycle": patch
+"@starkit/react-hook": patch
+"@starkit/tsconfig": patch
+"@starkit/utils": patch
 ---
 
 Very first initial commits

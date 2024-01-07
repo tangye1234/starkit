@@ -32,14 +32,14 @@ importers:
 
   packages/async:
     dependencies:
-      '@fine/utils':
+      '@starkit/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@fine/eslint-config':
+      '@starkit/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@fine/tsconfig':
+      '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/node':
@@ -88,17 +88,17 @@ importers:
 
   packages/event:
     dependencies:
-      '@fine/lifecycle':
+      '@starkit/lifecycle':
         specifier: workspace:*
         version: link:../lifecycle
-      '@fine/utils':
+      '@starkit/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@fine/eslint-config':
+      '@starkit/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@fine/tsconfig':
+      '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       tsup:
@@ -110,14 +110,14 @@ importers:
 
   packages/lifecycle:
     dependencies:
-      '@fine/utils':
+      '@starkit/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@fine/eslint-config':
+      '@starkit/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@fine/tsconfig':
+      '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       typescript:
@@ -126,14 +126,14 @@ importers:
 
   packages/react-hook:
     dependencies:
-      '@fine/utils':
+      '@starkit/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      '@fine/eslint-config':
+      '@starkit/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@fine/tsconfig':
+      '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/node':
@@ -166,10 +166,10 @@ importers:
 
   packages/utils:
     devDependencies:
-      '@fine/eslint-config':
+      '@starkit/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@fine/tsconfig':
+      '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       tsup:

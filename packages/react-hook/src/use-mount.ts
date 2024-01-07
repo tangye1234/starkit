@@ -1,5 +1,5 @@
 import { type EffectCallback, useEffect, useRef } from 'react'
-import { queueTask } from '@fine/utils'
+import { queueTask } from '@starkit/utils'
 
 import { useIsStrictMode } from './use-is-strict-mode'
 

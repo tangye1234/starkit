@@ -1,5 +1,5 @@
 {
-  "name": "@fine/lifecycle",
+  "name": "@starkit/lifecycle",
   "version": "1.0.0",
   "license": "MIT",
   "sideEffects": false,
@@ -15,11 +15,11 @@
     "lint:fix": "eslint \"src/**/*.ts*\" --fix"
   },
   "dependencies": {
-    "@fine/utils": "workspace:*"
+    "@starkit/utils": "workspace:*"
   },
   "devDependencies": {
-    "@fine/eslint-config": "workspace:*",
-    "@fine/tsconfig": "workspace:*",
+    "@starkit/eslint-config": "workspace:*",
+    "@starkit/tsconfig": "workspace:*",
     "typescript": "^5.3.3"
   }
 }

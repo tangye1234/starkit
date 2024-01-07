@@ -1,4 +1,4 @@
-import { queueTask } from '@fine/utils'
+import { queueTask } from '@starkit/utils'
 
 type ObserverInit = Omit<IntersectionObserverInit, 'threshold'>
 type ObserverCallback = (entry: IntersectionObserverEntry) => void

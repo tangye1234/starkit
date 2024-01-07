@@ -1,4 +1,4 @@
-import { AbortError, deferred } from '@fine/utils'
+import { AbortError, deferred } from '@starkit/utils'
 
 export function sleep(ms: number, signal?: AbortSignal) {
   if (signal?.aborted) return Promise.reject(signal.reason || new AbortError())

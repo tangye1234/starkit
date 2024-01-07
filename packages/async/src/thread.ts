@@ -1,4 +1,4 @@
-import { deferred } from '@fine/utils'
+import { deferred } from '@starkit/utils'
 
 export namespace Thread {
   export type Runnable = (this: Thread) => Promise<void>

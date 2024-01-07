@@ -1,5 +1,5 @@
 {
-  "name": "@fine/eslint-config",
+  "name": "@starkit/eslint-config",
   "version": "1.0.0",
   "license": "MIT",
   "files": [
