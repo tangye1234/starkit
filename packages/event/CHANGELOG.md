@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.0.2
+
+### Patch Changes
+
+- fix: event pointer compute error
+
 ## 1.0.1
 
 ### Patch Changes

@@ -2,6 +2,7 @@ import * as Lifecycle from '@starkit/lifecycle'
 import { once, queueTask } from '@starkit/utils'
 
 import { addEvent } from './add-event'
+import { getEventPointer, getPointerPos } from './pointer'
 
 type Identifier<E> = E extends MouseEvent
   ? 'mouse'
@@ -299,10 +300,9 @@ class DragFactoryImpl<
         touchable ? ['mousedown', 'touchstart'] : 'mousedown',
         e => {
           container = get(containerFn, target)
-          const pointer = getEventPointer(e)
+          const pos = getPointerPos(e, container)
           const subjectEvent: SubjectEvent<MouseEvent | TouchEvent> = {
-            x: pointer.clientX - container.clientLeft,
-            y: pointer.clientY - container.clientTop,
+            ...pos,
             nativeEvent: e
           }
           const escapable = get(escapableFn, target)
@@ -349,13 +349,11 @@ class DragFactoryImpl<
                   ? getEventPointer(e)
                   : {
                       clientX: lastEvt.x,
-                      clientY: lastEvt.y
+                      clientY: lastEvt.y,
+                      currentTarget: target
                     }
 
-              const pos = {
-                x: pointer.clientX - container.clientLeft,
-                y: pointer.clientY - container.clientTop
-              }
+              const pos = getPointerPos(pointer, container)
 
               const evt = {
                 target: handler,
@@ -397,11 +395,7 @@ class DragFactoryImpl<
           }
 
           const dragListener = (e: MouseEvent | TouchEvent) => {
-            const pointer = getEventPointer(e)
-            const pos = {
-              x: pointer.clientX - container.clientLeft,
-              y: pointer.clientY - container.clientTop
-            }
+            const pos = getPointerPos(e, container)
             const evt = {
               target: handler,
               x: pos.x,
@@ -456,10 +450,6 @@ class DragFactoryImpl<
     handler.on(type, listener)
     return handler as DragHandler<E, S, ESC>
   }
-}
-
-function getEventPointer(e: MouseEvent | TouchEvent) {
-  return 'touches' in e ? e.touches[0] : e
 }
 
 function getIdentifier<T>(evt: T) {
