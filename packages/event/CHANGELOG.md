@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.0.4
+
+### Patch Changes
+
+- Fix the drag identifier and touchend event issues
+
 ## 1.0.3
 
 ### Patch Changes
