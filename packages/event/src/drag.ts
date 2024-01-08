@@ -2,7 +2,7 @@ import * as Lifecycle from '@starkit/lifecycle'
 import { once, queueTask } from '@starkit/utils'
 
 import { addEvent } from './add-event'
-import { getEventPointer, getPointerPos } from './pointer'
+import { getPointerPos } from './pointer'
 
 type Identifier<E> = E extends MouseEvent
   ? 'mouse'
@@ -299,8 +299,12 @@ class DragFactoryImpl<
         target,
         touchable ? ['mousedown', 'touchstart'] : 'mousedown',
         e => {
+          // filter out the unwanted event
+          if (!filter(e)) return
+
           container = get(containerFn, target)
           const pos = getPointerPos(e, container)
+          const identifier = getIdentifier(e)
           const subjectEvent: SubjectEvent<MouseEvent | TouchEvent> = {
             ...pos,
             nativeEvent: e
@@ -320,7 +324,7 @@ class DragFactoryImpl<
             dx: 0,
             dy: 0,
             type: 'start',
-            identifier: getIdentifier(e),
+            identifier,
             nativeEvent: e,
             subject,
             [symbolPrevented]: false
@@ -344,16 +348,13 @@ class DragFactoryImpl<
                   ? 'end'
                   : 'cancel'
 
-              const pointer =
-                e && (e instanceof MouseEvent || e instanceof TouchEvent)
-                  ? getEventPointer(e)
+              const pos =
+                e instanceof MouseEvent || e instanceof TouchEvent
+                  ? getPointerPos(e, container, identifier)
                   : {
-                      clientX: lastEvt.x,
-                      clientY: lastEvt.y,
-                      currentTarget: target
+                      x: lastEvt.x,
+                      y: lastEvt.y
                     }
-
-              const pos = getPointerPos(pointer, container)
 
               const evt = {
                 target: handler,
@@ -362,7 +363,8 @@ class DragFactoryImpl<
                 dx: pos.x - lastEvt.x,
                 dy: pos.y - lastEvt.y,
                 type,
-                identifier: getIdentifier(e),
+                identifier:
+                  e instanceof TouchEvent ? identifier : getIdentifier(e),
                 nativeEvent: e,
                 subject,
                 defaultPrevented: false,
@@ -394,8 +396,11 @@ class DragFactoryImpl<
             return handler
           }
 
+          // prevent event touchstart default
+          if (identifier !== 'mouse') e.preventDefault()
+
           const dragListener = (e: MouseEvent | TouchEvent) => {
-            const pos = getPointerPos(e, container)
+            const pos = getPointerPos(e, container, identifier)
             const evt = {
               target: handler,
               x: pos.x,
@@ -403,7 +408,7 @@ class DragFactoryImpl<
               dx: pos.x - lastEvt.x,
               dy: pos.y - lastEvt.y,
               type: 'drag',
-              identifier: getIdentifier(e),
+              identifier,
               nativeEvent: e,
               subject,
               [symbolPrevented]: false
@@ -421,18 +426,18 @@ class DragFactoryImpl<
             }
           }
 
+          console.log(evt)
+
           dragStore.push(
             addEvent(
               document,
-              evt.identifier === 'mouse' ? 'mousemove' : 'touchmove',
-              dragListener
+              identifier === 'mouse' ? 'mousemove' : 'touchmove',
+              e => filter(e, identifier) && dragListener(e)
             ),
             addEvent(
               document,
-              evt.identifier === 'mouse'
-                ? 'mouseup'
-                : ['touchend', 'touchcancel'],
-              endListener
+              identifier === 'mouse' ? 'mouseup' : ['touchend', 'touchcancel'],
+              e => filter(e, identifier) && endListener(e)
             ),
             addEvent(window, 'blur', endListener),
             addEvent(
@@ -456,7 +461,7 @@ function getIdentifier<T>(evt: T) {
   if (!evt) return null as Identifier<T>
   if (evt instanceof MouseEvent) return 'mouse' as Identifier<T>
   if (evt instanceof TouchEvent)
-    return evt.touches[0].identifier as Identifier<T>
+    return evt.changedTouches[0].identifier as Identifier<T>
   if (evt instanceof KeyboardEvent && evt.key === 'Escape')
     return 'escape' as Identifier<T>
   if (evt instanceof FocusEvent && evt.type === 'blur')
@@ -491,6 +496,29 @@ const defaultContainer: DragFactoryImpl[typeof symbolContainer] = el =>
     ? el
     : el.parentElement || document.body
 const defaultTarget = () => document.body
+
+const filter = <T extends MouseEvent | TouchEvent>(
+  e: T,
+  identifier = null as Identifier<T>
+) => {
+  console.log(e, identifier)
+  if (e instanceof MouseEvent) {
+    console.log(0)
+    // not the left button
+    return e.button === 0 && (identifier === null || identifier === 'mouse')
+  }
+  console.log(1)
+  if (e instanceof TouchEvent) {
+    return (
+      identifier === null ||
+      (typeof identifier === 'number' &&
+        Array.from(e.changedTouches).some(
+          touch => touch.identifier === identifier
+        ))
+    )
+  }
+  return true
+}
 
 export function drag(ref?: Lifecycle.Ref) {
   return new DragFactoryImpl(

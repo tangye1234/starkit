@@ -1,20 +1,13 @@
-export interface Pointer {
-  readonly clientX: number
-  readonly clientY: number
-  readonly pageX?: number
-  readonly pageY?: number
-  readonly currentTarget?: EventTarget
-}
-
 /**
  * Get the event position to the target node
  * @see https://github.com/d3/d3-selection/blob/main/src/pointer.js
  */
 export function getPointerPos(
-  evt: MouseEvent | TouchEvent | Pointer,
-  node?: EventTarget | null | undefined
+  evt: MouseEvent | TouchEvent,
+  node?: EventTarget | null | undefined,
+  identifier?: unknown
 ) {
-  const pointer = getEventPointer(evt)
+  const pointer = getEventPointer(evt, identifier)
   if (!node) node = evt.currentTarget
 
   if (node instanceof SVGSVGElement) {
@@ -42,10 +35,18 @@ export function getPointerPos(
   }
 }
 
-export function getEventPointer<T extends MouseEvent | TouchEvent | Pointer>(
-  e: T
+export function getEventPointer<T extends MouseEvent | TouchEvent>(
+  e: T,
+  identifier?: unknown
 ) {
-  return (e instanceof TouchEvent ? e.touches[0] : e) as T extends TouchEvent
-    ? Touch
-    : T
+  if ('changedTouches' in e) {
+    if (typeof identifier === 'number') {
+      const touch = Array.from(e.changedTouches).find(
+        touch => touch.identifier === identifier
+      )
+      if (touch) return touch as T extends TouchEvent ? Touch : MouseEvent
+    }
+    return e.changedTouches[0] as T extends TouchEvent ? Touch : MouseEvent
+  }
+  return e as MouseEvent as T extends TouchEvent ? Touch : MouseEvent
 }
