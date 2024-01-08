@@ -1,5 +1,11 @@
 # @starkit/lifecycle
 
+## 1.0.2
+
+### Patch Changes
+
+- chore: update the type def on lifecycle, also add svg pointer position like d3-drag"
+
 ## 1.0.1
 
 ### Patch Changes
