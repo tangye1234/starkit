@@ -33,7 +33,6 @@ export class Reader<T> implements AsyncIterable<T> {
   }
 
   protected _read() {
-    if (this._closed) return
     return this[symbolReader]?.read()
   }
 

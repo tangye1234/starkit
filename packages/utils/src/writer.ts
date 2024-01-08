@@ -33,7 +33,6 @@ export class Writer<T> {
   }
 
   protected _write(item: T) {
-    if (this._closed) return
     this[symbolWriter]?.write(item)
   }
 

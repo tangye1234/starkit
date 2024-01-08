@@ -31,10 +31,6 @@
     "lint:fix": {},
     "start": {
       "cache": false
-    },
-    "publish": {
-      "dependsOn": ["^build", "^publish"],
-      "cache": false
     }
   }
 }
