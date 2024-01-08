@@ -3,6 +3,7 @@
   "display": "Starkit NextJS TSConfig",
   "extends": "./base.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "plugins": [{ "name": "next" }],
     "allowJs": true,
     "declaration": false,

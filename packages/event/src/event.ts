@@ -1,4 +1,4 @@
-import Lifecycle from '@starkit/lifecycle'
+import * as Lifecycle from '@starkit/lifecycle'
 
 import { addEvent, type EventMap } from './add-event'
 

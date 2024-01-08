@@ -79,7 +79,7 @@ export function all(...disposes: Dispose[]): Dispose {
   return () => disposes.forEach(d => d())
 }
 
-export function store(ref?: Ref): [store: Store, dispose: Dispose] {
+export function store(ref?: Ref): readonly [store: Store, dispose: Dispose] {
   const store = new StoreImpl()
 
   const dispose: Dispose = () => {
@@ -91,10 +91,10 @@ export function store(ref?: Ref): [store: Store, dispose: Dispose] {
   }
 
   connect(dispose, ref)
-  return [store as Store, dispose]
+  return [store, dispose]
 }
 
-export function mut(upstream?: Ref): [mut: Mut, dispose: Dispose] {
+export function mut(upstream?: Ref): readonly [mut: Mut, dispose: Dispose] {
   const mut = new MutImpl()
 
   const dispose = () => {

@@ -1,4 +1,4 @@
-import Lifecycle from '@starkit/lifecycle'
+import * as Lifecycle from '@starkit/lifecycle'
 import { once, queueTask } from '@starkit/utils'
 
 import { addEvent } from './add-event'

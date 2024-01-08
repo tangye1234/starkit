@@ -133,10 +133,26 @@ export type AddEvent<R = () => void> = {
   ): R
 }
 
+export type AddEventWithTarget<T extends EventTarget, R = () => void> = {
+  <const K extends keyof EventMap<T>>(
+    event: K | readonly K[],
+    listener: (
+      this: T,
+      ev: EventMap<T>[K] extends Event ? EventMap<T>[K] : Event
+    ) => void,
+    options?: boolean | AddEventListenerOptions
+  ): R
+  (
+    event: string | readonly string[],
+    listener: EventListener | EventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): R
+}
+
 const addEvent = ((
   target: EventTarget,
   event: string | string[],
-  listener: EventListener,
+  listener: EventListener | EventListenerObject,
   options?: boolean | AddEventListenerOptions
 ) => {
   const events = Array.isArray(event) ? [...event] : [event]
@@ -149,4 +165,16 @@ const addEvent = ((
   }
 }) as AddEvent
 
-export { addEvent }
+function fromEventTarget<T extends EventTarget>(
+  target: T
+): AddEventWithTarget<T> {
+  return function addEventWithTarget(
+    event: string | string[],
+    listener: EventListener | EventListenerObject,
+    options: boolean | AddEventListenerOptions
+  ) {
+    return addEvent(target, event, listener, options)
+  } as AddEventWithTarget<T>
+}
+
+export { addEvent, fromEventTarget }
