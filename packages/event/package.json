@@ -1,12 +1,14 @@
 {
   "name": "@starkit/event",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
