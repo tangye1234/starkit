@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.0.5
+
+### Patch Changes
+
+- Remove unused logs
+
 ## 1.0.4
 
 ### Patch Changes

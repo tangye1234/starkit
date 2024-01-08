@@ -426,8 +426,6 @@ class DragFactoryImpl<
             }
           }
 
-          console.log(evt)
-
           dragStore.push(
             addEvent(
               document,
@@ -501,13 +499,10 @@ const filter = <T extends MouseEvent | TouchEvent>(
   e: T,
   identifier = null as Identifier<T>
 ) => {
-  console.log(e, identifier)
   if (e instanceof MouseEvent) {
-    console.log(0)
     // not the left button
     return e.button === 0 && (identifier === null || identifier === 'mouse')
   }
-  console.log(1)
   if (e instanceof TouchEvent) {
     return (
       identifier === null ||
