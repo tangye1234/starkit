@@ -1,4 +1,4 @@
-import { queueTask } from '@starkit/utils'
+import { queueTask } from '@starkit/utils/queue-task'
 
 const storeSymbol = Symbol('Lifecycle.Store')
 const storeArraySymbol = Symbol('Lifecycle.Store.array')

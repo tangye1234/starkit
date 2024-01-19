@@ -1,5 +1,13 @@
 # @starkit/react-hook
 
+## 1.0.2
+
+### Patch Changes
+
+- support a better tree shaking imports
+- Updated dependencies
+  - @starkit/utils@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes

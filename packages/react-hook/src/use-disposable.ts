@@ -1,5 +1,5 @@
 import { type DependencyList, useMemo, useRef } from 'react'
-import { queueTask } from '@starkit/utils'
+import { queueTask } from '@starkit/utils/queue-task'
 
 import { useMount } from './use-mount'
 

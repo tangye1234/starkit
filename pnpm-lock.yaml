@@ -31,7 +31,7 @@ importers:
     dependencies:
       '@starkit/utils':
         specifier: workspace:*
-        version: link:../utils
+        version: link:../utils/dist
     devDependencies:
       '@starkit/eslint-config':
         specifier: workspace:*
@@ -42,6 +42,9 @@ importers:
       '@types/node':
         specifier: ~18.0.0
         version: 18.0.6
+      glob:
+        specifier: ^10.3.10
+        version: 10.3.10
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -90,7 +93,7 @@ importers:
         version: link:../lifecycle
       '@starkit/utils':
         specifier: workspace:*
-        version: link:../utils
+        version: link:../utils/dist
     devDependencies:
       '@starkit/eslint-config':
         specifier: workspace:*
@@ -98,6 +101,9 @@ importers:
       '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      glob:
+        specifier: ^10.3.10
+        version: 10.3.10
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(typescript@5.3.3)
@@ -109,7 +115,7 @@ importers:
     dependencies:
       '@starkit/utils':
         specifier: workspace:*
-        version: link:../utils
+        version: link:../utils/dist
     devDependencies:
       '@starkit/eslint-config':
         specifier: workspace:*
@@ -125,7 +131,7 @@ importers:
     dependencies:
       '@starkit/utils':
         specifier: workspace:*
-        version: link:../utils
+        version: link:../utils/dist
     devDependencies:
       '@starkit/eslint-config':
         specifier: workspace:*
@@ -145,6 +151,9 @@ importers:
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
+      glob:
+        specifier: ^10.3.10
+        version: 10.3.10
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -169,12 +178,16 @@ importers:
       '@starkit/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      glob:
+        specifier: ^10.3.10
+        version: 10.3.10
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(typescript@5.3.3)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
+    publishDirectory: dist
 
 packages:
 

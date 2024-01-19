@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { throttle } from '@starkit/utils'
+import { throttle } from '@starkit/utils/throttle'
 
 import { useCallbackRef } from './use-callback-ref'
 

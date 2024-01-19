@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { debounce } from '@starkit/utils'
+import { debounce } from '@starkit/utils/debounce'
 
 import { useCallbackRef } from './use-callback-ref'
 

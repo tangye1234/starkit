@@ -1,5 +1,6 @@
 import * as Lifecycle from '@starkit/lifecycle'
-import { once, queueTask } from '@starkit/utils'
+import { once } from '@starkit/utils/once'
+import { queueTask } from '@starkit/utils/queue-task'
 
 import { addEvent } from './add-event'
 import { getPointerPos } from './pointer'

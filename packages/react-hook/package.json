@@ -1,16 +1,20 @@
 {
   "name": "@starkit/react-hook",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "main": "./index.js",
+    "module": "./index.mjs",
+    "types": "./index.d.ts"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
+    "build": "tsup --onSuccess \"cp package.json dist\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "npm run build -- --watch",
     "lint": "eslint \"src/**/*.ts*\"",
@@ -26,6 +30,7 @@
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",
     "eslint": "^8.56.0",
+    "glob": "^10.3.10",
     "react": "^18.2.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"

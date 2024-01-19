@@ -1,5 +1,13 @@
 # @starkit/lifecycle
 
+## 1.0.3
+
+### Patch Changes
+
+- support a better tree shaking imports
+- Updated dependencies
+  - @starkit/utils@1.0.2
+
 ## 1.0.2
 
 ### Patch Changes

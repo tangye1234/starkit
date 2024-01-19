@@ -1,7 +1,7 @@
-import { queueTask } from '@starkit/utils'
+import { queueTask } from '@starkit/utils/queue-task'
 
-type ObserverInit = Omit<IntersectionObserverInit, 'threshold'>
-type ObserverCallback = (entry: IntersectionObserverEntry) => void
+export type ObserverInit = Omit<IntersectionObserverInit, 'threshold'>
+export type ObserverCallback = (entry: IntersectionObserverEntry) => void
 type Identifier = {
   readonly root: Element | Document | null
   readonly margin: string

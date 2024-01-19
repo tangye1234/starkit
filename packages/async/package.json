@@ -1,16 +1,20 @@
 {
   "name": "@starkit/async",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "main": "./index.js",
+    "module": "./index.mjs",
+    "types": "./index.d.ts"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup --onSuccess \"cp package.json dist\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "npm run build -- --watch",
     "lint": "eslint \"src/**/*.ts*\"",
@@ -23,6 +27,7 @@
     "@starkit/eslint-config": "workspace:*",
     "@starkit/tsconfig": "workspace:*",
     "@types/node": "~18.0.0",
+    "glob": "^10.3.10",
     "typescript": "^5.3.3"
   }
 }

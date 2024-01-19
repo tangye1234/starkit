@@ -1,5 +1,11 @@
 # @starkit/utils
 
+## 1.0.2
+
+### Patch Changes
+
+- support a better tree shaking imports
+
 ## 1.0.1
 
 ### Patch Changes
