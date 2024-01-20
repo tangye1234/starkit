@@ -1,5 +1,14 @@
 # @starkit/event
 
+## 1.0.7
+
+### Patch Changes
+
+- Use splitting profile for commonjs module
+- Updated dependencies
+  - @starkit/utils@1.0.3
+  - @starkit/lifecycle@1.0.4
+
 ## 1.0.6
 
 ### Patch Changes
