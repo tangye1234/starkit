@@ -1,6 +1,6 @@
 {
   "name": "@starkit/react-hook",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",

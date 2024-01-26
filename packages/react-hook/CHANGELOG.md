@@ -1,5 +1,16 @@
 # @starkit/react-hook
 
+## 1.0.4
+
+### Patch Changes
+
+- 1. add buffer / hoc for utils
+  2. add useBuffer for react-hook
+  3. add signal / wait for async
+  4. use hoc as the default fn wrapper helper
+- Updated dependencies
+  - @starkit/utils@1.0.4
+
 ## 1.0.3
 
 ### Patch Changes

@@ -1,21 +1,23 @@
+import { hoc } from './hoc'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function throttle<T extends (...args: any[]) => R, R>(
-  callback: T,
+export function throttle<T extends (...args: any[]) => R, R = unknown>(
+  fn: T,
   delay = 166
 ): T {
-  const name = callback.name || 'anonymous'
   let ref: { current: R } | undefined
 
-  return {
-    [name]: function (this: unknown, ...args: Parameters<T>) {
+  return hoc(
+    function (this: unknown, ...args: Parameters<T>) {
       if (ref) return ref.current
       ref = {
-        current: callback.apply(this, args)
+        current: fn.apply(this, args)
       }
       setTimeout(() => {
         ref = undefined
       }, delay)
       return ref.current
-    } as T
-  }[name]
+    } as T,
+    fn
+  )
 }

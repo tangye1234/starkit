@@ -1,5 +1,13 @@
 # @starkit/event
 
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @starkit/lifecycle@1.0.5
+  - @starkit/utils@1.0.4
+
 ## 1.0.7
 
 ### Patch Changes

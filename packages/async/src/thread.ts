@@ -102,6 +102,8 @@ export class Thread {
   }
 }
 
+const _noop = () => {}
+
 // NodeJS: safely interrupt thread when received signals
 export function interruptThreadOnSignal(t: Thread) {
   if (
@@ -114,9 +116,13 @@ export function interruptThreadOnSignal(t: Thread) {
     process.on('SIGINT', interrupt)
     process.on('SIGTERM', interrupt)
 
-    t.finished.finally(() => {
+    const unsubscribe = () => {
       process.removeListener('SIGINT', interrupt)
       process.removeListener('SIGTERM', interrupt)
-    })
+    }
+
+    t.finished.finally(unsubscribe)
+    return unsubscribe
   }
+  return _noop
 }

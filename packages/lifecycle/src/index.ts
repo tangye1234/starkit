@@ -1,3 +1,4 @@
+import { hoc } from '@starkit/utils/hoc'
 import { queueTask } from '@starkit/utils/queue-task'
 
 const storeSymbol = Symbol('Lifecycle.Store')
@@ -136,9 +137,8 @@ export function bindMut<
   Fn extends (...args: any[]) => Dispose | readonly [unknown, Dispose]
 >(mut: Mut, factory: Fn): Fn {
   // named function
-  const name = factory.name || 'anonymous'
-  return {
-    [name]: function (this: unknown, ...args: any[]) {
+  return hoc(
+    function (this: unknown, ...args: any[]) {
       mut.unref()
       const r = factory.apply(this, args)
       // connect(typeof r === 'function' ? r : r[1], ref)
@@ -148,8 +148,9 @@ export function bindMut<
         mut.current = r[1]
       }
       return r
-    } as Fn
-  }[name]
+    } as Fn,
+    factory
+  )
 }
 
 export function timeout<C extends (...args: any[]) => void>(
