@@ -1,6 +1,6 @@
 {
   "name": "@starkit/tsconfig",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "files": [
     "base.json",
@@ -9,9 +9,9 @@
     "react.json"
   ],
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   },
   "peerDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   }
 }

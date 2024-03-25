@@ -1,5 +1,12 @@
 # @starkit/utils
 
+## 1.0.5
+
+### Patch Changes
+
+- upgrade typescript and eslint
+- package license typo fix
+
 ## 1.0.4
 
 ### Patch Changes

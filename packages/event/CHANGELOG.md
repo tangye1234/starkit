@@ -1,5 +1,15 @@
 # @starkit/event
 
+## 1.0.9
+
+### Patch Changes
+
+- upgrade typescript and eslint
+- Updated dependencies
+- Updated dependencies
+  - @starkit/lifecycle@1.0.6
+  - @starkit/utils@1.0.5
+
 ## 1.0.8
 
 ### Patch Changes

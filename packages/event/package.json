@@ -1,6 +1,6 @@
 {
   "name": "@starkit/event",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -29,6 +29,6 @@
     "@starkit/tsconfig": "workspace:*",
     "glob": "^10.3.10",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   }
 }

@@ -1,5 +1,11 @@
 # @starkit/tsconfig
 
+## 1.0.2
+
+### Patch Changes
+
+- upgrade typescript and eslint
+
 ## 1.0.1
 
 ### Patch Changes

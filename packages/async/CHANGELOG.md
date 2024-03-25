@@ -1,5 +1,14 @@
 # @starkit/async
 
+## 1.0.5
+
+### Patch Changes
+
+- upgrade typescript and eslint
+- Updated dependencies
+- Updated dependencies
+  - @starkit/utils@1.0.5
+
 ## 1.0.4
 
 ### Patch Changes
