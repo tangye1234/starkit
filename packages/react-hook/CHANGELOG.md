@@ -1,5 +1,12 @@
 # @starkit/react-hook
 
+## 1.0.6
+
+### Patch Changes
+
+- Add use-is-ssr and make react 19 supported
+  - @starkit/utils@1.0.5
+
 ## 1.0.5
 
 ### Patch Changes
