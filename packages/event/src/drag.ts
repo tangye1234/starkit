@@ -20,6 +20,11 @@ export interface DefaultSubject {
   readonly y: number
 }
 
+/** support the browser which dose not have TouchEvent */
+const TouchEvent =
+  (typeof window !== 'undefined' ? window.TouchEvent : null) ||
+  (function TouchEvent() {} as unknown as typeof window.TouchEvent)
+
 export interface SubjectEvent<
   E extends MouseEvent | TouchEvent = MouseEvent | TouchEvent
 > {

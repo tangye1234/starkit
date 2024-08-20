@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.0.10
+
+### Patch Changes
+
+- fix safari compatibility for drag util"
+
 ## 1.0.9
 
 ### Patch Changes
