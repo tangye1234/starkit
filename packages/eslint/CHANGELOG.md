@@ -1,5 +1,11 @@
 # @starkit/eslint-config
 
+## 2.0.0
+
+### Major Changes
+
+- upgrade eslint to 9
+
 ## 1.0.3
 
 ### Patch Changes

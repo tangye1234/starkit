@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@starkit/utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
