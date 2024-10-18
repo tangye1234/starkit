@@ -2,27 +2,81 @@
   "name": "@starkit/eslint-config",
   "version": "1.0.3",
   "license": "MIT",
+  "type": "module",
   "files": [
-    "index.js",
-    "react.js"
+    "index.mjs",
+    "index.d.mts",
+    "react.mjs",
+    "react.d.mts",
+    "import.mjs",
+    "import.d.mts",
+    "prettier.mjs",
+    "prettier.d.mts",
+    "simple-import-sort.mjs",
+    "simple-import-sort.d.mts",
+    "typescript.mjs",
+    "typescript.d.mts",
+    "react-hooks.mjs",
+    "react-hooks.d.mts",
+    "jsx-a11y.mjs",
+    "jsx-a11y.d.mts"
   ],
+  "main": "index.mjs",
+  "exports": {
+    ".": {
+      "types": "./index.d.mts",
+      "import": "./index.mjs"
+    },
+    "./react": {
+      "types": "./react.d.mts",
+      "import": "./react.mjs"
+    },
+    "./import": {
+      "types": "./import.d.mts",
+      "import": "./import.mjs"
+    },
+    "./prettier": {
+      "types": "./prettier.d.mts",
+      "import": "./prettier.mjs"
+    },
+    "./simple-import-sort": {
+      "types": "./simple-import-sort.d.mts",
+      "import": "./simple-import-sort.mjs"
+    },
+    "./typescript": {
+      "types": "./typescript.d.mts",
+      "import": "./typescript.mjs"
+    },
+    "./react-hooks": {
+      "types": "./react-hooks.d.mts",
+      "import": "./react-hooks.mjs"
+    },
+    "./jsx-a11y": {
+      "types": "./jsx-a11y.d.mts",
+      "import": "./jsx-a11y.mjs"
+    }
+  },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.5.0",
-    "@typescript-eslint/parser": "^8.5.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.30.0",
+    "@eslint/compat": "^1.2.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.12.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
+    "eslint-plugin-import-x": "^4.3.1",
     "eslint-plugin-jsx-a11y": "^6.10.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.35.2",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-simple-import-sort": "^12.1.1"
+    "eslint-plugin-react": "^7.37.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "typescript-eslint": "^8.10.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5"
+    "@types/eslint__js": "^8.42.3",
+    "eslint": "^9.12.0",
+    "prettier": "^3.3.3",
+    "typescript": "5.6.3"
   },
   "peerDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5"
+    "eslint": "^9.12.0",
+    "prettier": "^3.3.3"
   }
 }

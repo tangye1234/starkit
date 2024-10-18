@@ -9,9 +9,9 @@
     "react.json"
   ],
   "devDependencies": {
-    "typescript": "^5.4.3"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
-    "typescript": "^5.4.3"
+    "typescript": "^5.6.3"
   }
 }

@@ -9,7 +9,9 @@ export const getCurrentOwner = () => {
     // React 19
     // @ts-expect-error - using react internals
     return React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE.A.getOwner()
-  } catch {}
+  } catch {
+    /* empty */
+  }
 
   try {
     // React <18

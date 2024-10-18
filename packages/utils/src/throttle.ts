@@ -1,6 +1,5 @@
 import { hoc } from './hoc'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function throttle<T extends (...args: any[]) => R, R = unknown>(
   fn: T,
   delay = 166
