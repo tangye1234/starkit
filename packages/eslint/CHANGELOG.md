@@ -1,5 +1,11 @@
 # @starkit/eslint-config
 
+## 2.0.2
+
+### Patch Changes
+
+- add eslint-config-prettier as the must deps
+
 ## 2.0.1
 
 ### Patch Changes
