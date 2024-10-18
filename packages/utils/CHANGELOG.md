@@ -1,5 +1,11 @@
 # @starkit/utils
 
+## 1.0.7
+
+### Patch Changes
+
+- upgrade eslint
+
 ## 1.0.6
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @starkit/event
 
+## 1.0.12
+
+### Patch Changes
+
+- upgrade eslint
+- Updated dependencies
+  - @starkit/lifecycle@1.0.8
+  - @starkit/utils@1.0.7
+
 ## 1.0.11
 
 ### Patch Changes

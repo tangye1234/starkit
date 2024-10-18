@@ -1,6 +1,6 @@
 {
   "name": "@starkit/tsconfig",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "files": [
     "base.json",

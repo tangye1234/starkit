@@ -1,5 +1,11 @@
 # @starkit/tsconfig
 
+## 1.0.4
+
+### Patch Changes
+
+- upgrade eslint
+
 ## 1.0.3
 
 ### Patch Changes

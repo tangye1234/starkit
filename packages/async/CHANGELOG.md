@@ -1,5 +1,13 @@
 # @starkit/async
 
+## 1.0.7
+
+### Patch Changes
+
+- upgrade eslint
+- Updated dependencies
+  - @starkit/utils@1.0.7
+
 ## 1.0.6
 
 ### Patch Changes
