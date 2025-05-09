@@ -1,11 +1,13 @@
 import { Queue } from './queue'
 import { Reader } from './reader'
 
+/** @deprecated use BlockingQueue instead */
 export class BlockQueue<T> extends Reader<T> {
   private readonly queue = new Queue<T>()
 
   constructor() {
     super()
+    this.finished.finally(() => this.queue.clear())
   }
 
   push(...values: T[]) {
@@ -18,12 +20,7 @@ export class BlockQueue<T> extends Reader<T> {
     return this.queue.size > 0
   }
 
-  protected _read(): T | undefined {
-    return this.queue.shift()
-  }
-
-  close(reason?: unknown) {
-    this.queue.clear()
-    super.close(reason)
+  protected _read(): T {
+    return this.queue.shift()!
   }
 }

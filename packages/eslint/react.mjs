@@ -11,7 +11,7 @@ const { configs } = reactPlugin
 export default [
   ...base.slice(0, -1),
   ...jsxA11y,
-  reactHooks,
+  ...reactHooks,
   configs.flat.recommended,
   configs.flat['jsx-runtime'],
   {

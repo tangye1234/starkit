@@ -5,23 +5,29 @@ import * as React from 'react'
  * @see https://github.com/microsoft/use-disposable/blob/main/src/useIsStrictMode.ts
  */
 export const getCurrentOwner = () => {
+  // Note: String concatenation is used to prevent bundlers to complain with multiple versions of React
   try {
     // React 19
-    // @ts-expect-error - using react internals
-    return React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE.A.getOwner()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (React as any)[
+      ''.concat(
+        '__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE'
+      )
+    ].A.getOwner()
   } catch {
     /* empty */
   }
 
   try {
     // React <18
-    // @ts-expect-error - using react internals
-    return React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-      .ReactCurrentOwner.current
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (React as any)[
+      ''.concat('__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED')
+    ].ReactCurrentOwner.current
   } catch {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
-        'getCurrentOwner: failed to get current fiber, please report this bug to maintainers'
+        'use-disposable: failed to get current fiber, please report this bug to maintainers'
       )
     }
   }

@@ -25,7 +25,7 @@
     "@starkit/eslint-config": "workspace:*",
     "@starkit/tsconfig": "workspace:*",
     "glob": "^11.0.0",
-    "tsup": "^8.3.0",
-    "typescript": "^5.6.3"
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3"
   }
 }

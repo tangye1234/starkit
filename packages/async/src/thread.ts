@@ -11,6 +11,33 @@ export namespace Thread {
 
 const symbolId = Symbol('thread.id')
 
+/**
+ * An emulated `Thread` with a controlled runnable, which can be
+ * started, interrupted, and waited for finish.
+ *
+ * @example
+ * ```ts
+ * let reader = ... // a data reader
+ *
+ * const t = new Thread(async thread => {
+ *   while (!thread.interrupted) {
+ *     await sleep(1000)
+ *     const { value, done } = await reader.read()
+ *     if (done) break
+ *     await process(value, thread.signal)
+ *   }
+ * })
+ *
+ * // start the thread
+ * t.start()
+ *
+ * // join the thread
+ * await t.finished
+ *
+ * // later
+ * t.interrupt()
+ * ```
+ */
 export class Thread {
   private static [symbolId] = 0
   private _id = `Thread #${Thread[symbolId]++}`

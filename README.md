@@ -14,7 +14,7 @@ This package includes tsconfig template for basic / node / react / nextjs projec
 This package includes common utils for js projects with full powered typedef.
 
 ### @starkit/async <br>[![async version][async-image]][async-url]
-This package includes some useful async utils, such as retry / runloop / sleep etc.
+This package includes some useful async utils, such as retry / run-loop / run-parallel / sleep etc.
 
 ### @starkit/lifecycle <br>[![lifecycle version][lifecycle-image]][lifecycle-url]
 This package is a collection of lifecycle function, like disposable system and many related helpers etc.
@@ -29,6 +29,8 @@ This package includes some universal hooks like `useCallbackRef`, `usePrevious`,
 And some hooks which benifits with a smart type inference system like `useDebounce`, `useDebouceState` and `useThrottle`
 
 And also hooks which function perfectly well in react 18 strict dev mode like `useDisposable` and `useMount`.
+
+We also provide a `useUpdate`、 `useIsSSR`、`useDevicePixelRatio` hook that is very common in real world. 
 
 [eslint-image]: https://img.shields.io/npm/v/@starkit/eslint-config.svg?style=flat-square
 [eslint-url]: https://npmjs.org/package/@starkit/eslint-config

@@ -283,7 +283,8 @@ class DragFactoryImpl<
       fn: T,
       ...args: any[]
     ): T extends (...args: any[]) => infer R ? R : T => {
-      return typeof fn === 'function' ? fn(...args) : fn
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return typeof fn === 'function' ? fn(...args) : (fn as any)
     }
     const ref = this[symbolRef]
     const targetFn = this[symbolTarget]

@@ -54,3 +54,33 @@ export function isTimeoutError(
 ): err is Error & { name: 'TimeoutError' } {
   return err instanceof Error && err.name === 'TimeoutError'
 }
+
+export class FullError extends Error {
+  constructor(message: string, opt?: ErrorOptions) {
+    super(message, opt)
+  }
+
+  get name() {
+    return 'FullError'
+  }
+}
+
+export class EmptyError extends Error {
+  constructor(message: string, opt?: ErrorOptions) {
+    super(message, opt)
+  }
+
+  get name() {
+    return 'EmptyError'
+  }
+}
+
+export class ClosedError extends Error {
+  constructor(message: string, opt?: ErrorOptions) {
+    super(message, opt)
+  }
+
+  get name() {
+    return 'ClosedError'
+  }
+}

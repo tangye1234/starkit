@@ -6,6 +6,7 @@ export class BlockStack<T> extends Reader<T> {
 
   constructor() {
     super()
+    this.finished.finally(() => this.stack.clear())
   }
 
   push(...values: T[]) {
@@ -18,12 +19,7 @@ export class BlockStack<T> extends Reader<T> {
     return this.stack.size > 0
   }
 
-  protected _read(): T | undefined {
-    return this.stack.pop()
-  }
-
-  close(reason?: unknown) {
-    this.stack.clear()
-    super.close(reason)
+  protected _read(): T {
+    return this.stack.pop()!
   }
 }

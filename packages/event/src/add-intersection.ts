@@ -135,7 +135,7 @@ function deleteObserver(options: ObserverInit) {
 export function addIntersection(
   element: Element,
   callback: ObserverCallback,
-  options: ObserverInit
+  options: ObserverInit = {}
 ): () => void {
   const observer = createObserver(options)
   const state = bindCallbackToElementState(element, observer, callback)

@@ -14,7 +14,7 @@ export default function useDisposable<const T>(
   create: () => readonly [instance: T, dispose: () => void],
   deps: DependencyList = []
 ): T {
-  const disposeRef = useRef<() => void>()
+  const disposeRef = useRef<(() => void) | undefined>(undefined)
   const instance = useMemo(() => {
     disposeRef.current?.()
     const [instance, dispose] = create()

@@ -1,15 +1,14 @@
-import reactHooks from 'eslint-plugin-react-hooks'
+import { configs } from 'eslint-plugin-react-hooks'
 
-/** @type {import('eslint').Linter.Config} */
-export default {
-  plugins: {
-    'react-hooks': reactHooks
-  },
-  rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': [
-      'warn',
-      { additionalHooks: 'useDisposable' }
-    ]
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  configs['recommended-latest'],
+  {
+    rules: {
+      'react-hooks/exhaustive-deps': [
+        'warn',
+        { additionalHooks: 'useDisposable' }
+      ]
+    }
   }
-}
+]
