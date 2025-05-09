@@ -1,5 +1,17 @@
 # @starkit/event
 
+## 1.1.0
+
+### Minor Changes
+
+- Typescript upgrade
+
+### Patch Changes
+
+- Updated dependencies
+  - @starkit/utils@1.1.0
+  - @starkit/lifecycle@1.0.9
+
 ## 1.0.12
 
 ### Patch Changes

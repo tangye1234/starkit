@@ -1,5 +1,16 @@
 # @starkit/react-hook
 
+## 1.1.0
+
+### Minor Changes
+
+- Typescript upgrade and add some new hooks
+
+### Patch Changes
+
+- Updated dependencies
+  - @starkit/utils@1.1.0
+
 ## 1.0.8
 
 ### Patch Changes

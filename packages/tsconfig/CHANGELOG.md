@@ -1,5 +1,11 @@
 # @starkit/tsconfig
 
+## 1.1.0
+
+### Minor Changes
+
+- Typescript upgrade to 5.8.3
+
 ## 1.0.4
 
 ### Patch Changes

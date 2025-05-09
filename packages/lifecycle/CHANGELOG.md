@@ -1,5 +1,13 @@
 # @starkit/lifecycle
 
+## 1.0.9
+
+### Patch Changes
+
+- Typescript upgrade
+- Updated dependencies
+  - @starkit/utils@1.1.0
+
 ## 1.0.8
 
 ### Patch Changes

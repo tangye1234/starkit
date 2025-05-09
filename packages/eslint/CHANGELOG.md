@@ -1,5 +1,11 @@
 # @starkit/eslint-config
 
+## 2.1.0
+
+### Minor Changes
+
+- Eslint upgrade with typescript 5.8.3 supported
+
 ## 2.0.2
 
 ### Patch Changes

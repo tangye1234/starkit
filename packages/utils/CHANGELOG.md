@@ -1,5 +1,13 @@
 # @starkit/utils
 
+## 1.1.0
+
+### Minor Changes
+
+- Typescript upgrade
+- Add BlockingQueue, and deprecated BlockQueue
+- Reader / Writer / Duplex / Pipe refactor
+
 ## 1.0.7
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @starkit/async
 
+## 1.1.0
+
+### Minor Changes
+
+- Typescript upgrade and retry refactor
+
+### Patch Changes
+
+- Updated dependencies
+  - @starkit/utils@1.1.0
+
 ## 1.0.7
 
 ### Patch Changes
