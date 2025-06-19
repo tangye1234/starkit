@@ -1,5 +1,4 @@
 import * as Lifecycle from '@starkit/lifecycle'
-import { once } from '@starkit/utils/once'
 import { queueTask } from '@starkit/utils/queue-task'
 
 import { addEvent } from './add-event'
@@ -338,56 +337,59 @@ class DragFactoryImpl<
           } as DragEvent<MouseEvent | TouchEvent, S, 'start', DragHandlerImpl>
           Object.setPrototypeOf(evt, dragEventProto)
 
-          const endListener = once(
-            (
-              e:
-                | MouseEvent
-                | TouchEvent
-                | KeyboardEvent
-                | FocusEvent
-                | void
-                | undefined
-            ) => {
-              const type =
-                e &&
-                (e instanceof MouseEvent ||
-                  (e instanceof TouchEvent && e.type === 'touchend'))
-                  ? 'end'
-                  : 'cancel'
+          let ended = false
 
-              const pos =
-                e instanceof MouseEvent || e instanceof TouchEvent
-                  ? getPointerPos(e, container, identifier)
-                  : {
-                      x: lastEvt.x,
-                      y: lastEvt.y
-                    }
+          const endListener = (
+            e:
+              | MouseEvent
+              | TouchEvent
+              | KeyboardEvent
+              | FocusEvent
+              | void
+              | undefined
+          ) => {
+            if (ended) return
+            ended = true
 
-              const evt = {
-                target: handler,
-                x: pos.x,
-                y: pos.y,
-                dx: pos.x - lastEvt.x,
-                dy: pos.y - lastEvt.y,
-                type,
-                identifier:
-                  e instanceof TouchEvent ? identifier : getIdentifier(e),
-                nativeEvent: e,
-                subject,
-                defaultPrevented: false,
-                preventDefault: () => {}
-              } as DragEvent<
-                MouseEvent | TouchEvent,
-                S,
-                typeof type,
-                DragHandlerImpl
-              >
-              dispatch(evt)
+            const type =
+              e &&
+              (e instanceof MouseEvent ||
+                (e instanceof TouchEvent && e.type === 'touchend'))
+                ? 'end'
+                : 'cancel'
 
-              // remove all listeners bound to document or window
-              disposeDrag()
-            }
-          )
+            const pos =
+              e instanceof MouseEvent || e instanceof TouchEvent
+                ? getPointerPos(e, container, identifier)
+                : {
+                    x: lastEvt.x,
+                    y: lastEvt.y
+                  }
+
+            const evt = {
+              target: handler,
+              x: pos.x,
+              y: pos.y,
+              dx: pos.x - lastEvt.x,
+              dy: pos.y - lastEvt.y,
+              type,
+              identifier:
+                e instanceof TouchEvent ? identifier : getIdentifier(e),
+              nativeEvent: e,
+              subject,
+              defaultPrevented: false,
+              preventDefault: () => {}
+            } as DragEvent<
+              MouseEvent | TouchEvent,
+              S,
+              typeof type,
+              DragHandlerImpl
+            >
+            dispatch(evt)
+
+            // remove all listeners bound to document or window
+            disposeDrag()
+          }
 
           dispatch(evt)
 
