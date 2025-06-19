@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.1.1
+
+### Patch Changes
+
+- fix: drag listener will call endlistener twice
+
 ## 1.1.0
 
 ### Minor Changes
