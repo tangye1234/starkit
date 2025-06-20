@@ -61,6 +61,7 @@ const symbolEscapable = Symbol('drag.escapable')
 const symbolSubject = Symbol('drag.subject')
 const symbolPrevented = Symbol('drag.prevented')
 const symbolListener = Symbol('drag.listener')
+const symbolPassive = Symbol('drag.passive')
 
 type HasKeyboardEvent<ESC extends boolean> = ESC extends true
   ? KeyboardEvent
@@ -119,6 +120,12 @@ export interface DragFactory<
   useEscape<B extends boolean>(
     escapable: B | ((target: HTMLElement) => B)
   ): DragFactory<E, S, B>
+  /**
+   * Whether to use passive event listener.
+   * Default is undefined.
+   * @param passive set to true to use passive event listener
+   */
+  usePassive(passive?: boolean | undefined): DragFactory<E, S, ESC>
   /**
    * Add a subject function so that each of the following event has a static subject.
    * If return void or undefined or null, the following event would be prevented from emitting.
@@ -198,6 +205,7 @@ class DragFactoryImpl<
     | ((target: HTMLElement) => boolean)
 
   private readonly [symbolRef]?: Lifecycle.Ref
+  private readonly [symbolPassive]?: boolean
 
   constructor(
     target: HTMLElement | (() => HTMLElement),
@@ -205,7 +213,8 @@ class DragFactoryImpl<
     subject: (ev: SubjectEvent, target: HTMLElement) => S,
     escapable: ESC | ((target: HTMLElement) => ESC),
     touchable: boolean | ((target: HTMLElement) => boolean),
-    ref?: Lifecycle.Ref | undefined
+    ref?: Lifecycle.Ref | undefined,
+    passive?: boolean | undefined
   ) {
     this[symbolTarget] = target
     this[symbolContainer] = container
@@ -213,6 +222,7 @@ class DragFactoryImpl<
     this[symbolEscapable] = escapable
     this[symbolTouchable] = touchable
     this[symbolRef] = ref
+    this[symbolPassive] = passive
   }
 
   target(target: HTMLElement | (() => HTMLElement)) {
@@ -222,7 +232,8 @@ class DragFactoryImpl<
       this[symbolSubject],
       this[symbolEscapable],
       this[symbolTouchable],
-      this[symbolRef]
+      this[symbolRef],
+      this[symbolPassive]
     )
   }
 
@@ -233,7 +244,8 @@ class DragFactoryImpl<
       this[symbolSubject],
       this[symbolEscapable],
       this[symbolTouchable],
-      this[symbolRef]
+      this[symbolRef],
+      this[symbolPassive]
     )
   }
 
@@ -244,7 +256,8 @@ class DragFactoryImpl<
       sub,
       this[symbolEscapable],
       this[symbolTouchable],
-      this[symbolRef]
+      this[symbolRef],
+      this[symbolPassive]
     )
   }
 
@@ -255,7 +268,8 @@ class DragFactoryImpl<
       this[symbolSubject],
       escapable,
       this[symbolTouchable],
-      this[symbolRef]
+      this[symbolRef],
+      this[symbolPassive]
     )
   }
 
@@ -270,7 +284,20 @@ class DragFactoryImpl<
       this[symbolSubject],
       this[symbolEscapable],
       touchable,
-      this[symbolRef]
+      this[symbolRef],
+      this[symbolPassive]
+    )
+  }
+
+  usePassive(passive?: boolean | undefined): DragFactory<E, S, ESC> {
+    return new DragFactoryImpl<E, S, ESC>(
+      this[symbolTarget],
+      this[symbolContainer],
+      this[symbolSubject],
+      this[symbolEscapable],
+      this[symbolTouchable],
+      this[symbolRef],
+      passive
     )
   }
 
@@ -291,6 +318,7 @@ class DragFactoryImpl<
     const containerFn = this[symbolContainer]
     const touchableFn = this[symbolTouchable]
     const escapableFn = this[symbolEscapable]
+    const passive = this[symbolPassive]
 
     const [store, dispose] = Lifecycle.store(ref)
     const [dragMut] = Lifecycle.mut(store)
@@ -406,7 +434,9 @@ class DragFactoryImpl<
           }
 
           // prevent event touchstart default
-          if (identifier !== 'mouse') e.preventDefault()
+          if (identifier !== 'mouse' && passive === undefined) {
+            e.preventDefault()
+          }
 
           const dragListener = (e: MouseEvent | TouchEvent) => {
             const pos = getPointerPos(e, container, identifier)
@@ -439,22 +469,26 @@ class DragFactoryImpl<
             addEvent(
               document,
               identifier === 'mouse' ? 'mousemove' : 'touchmove',
-              e => filter(e, identifier) && dragListener(e)
+              e => filter(e, identifier) && dragListener(e),
+              { passive }
             ),
             addEvent(
               document,
               identifier === 'mouse' ? 'mouseup' : ['touchend', 'touchcancel'],
-              e => filter(e, identifier) && endListener(e)
+              e => filter(e, identifier) && endListener(e),
+              { passive }
             ),
             addEvent(window, 'blur', endListener),
             addEvent(
               document,
               escapable ? 'keydown' : [],
-              e => e.key === 'Escape' && endListener(e)
+              e => e.key === 'Escape' && endListener(e),
+              { passive }
             ),
             endListener
           )
-        }
+        },
+        { passive }
       )
     )
 
@@ -531,6 +565,7 @@ export function drag(ref?: Lifecycle.Ref) {
     defaultSubject,
     true,
     defaultTouchable,
-    ref
+    ref,
+    undefined
   ) as DragFactory
 }
