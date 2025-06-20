@@ -1,5 +1,11 @@
 # @starkit/event
 
+## 1.1.2
+
+### Patch Changes
+
+- Add use passive option in drag utils
+
 ## 1.1.1
 
 ### Patch Changes
